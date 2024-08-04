@@ -1,7 +1,8 @@
 # Final-Project
 
-CREDIT CARD CLUSTERING
+**CREDIT CARD CLUSTERING**
 Project Description
+
 The sample Dataset summarizes the usage behavior of about 9000 active credit card holders during the last 6 months. The file is at a customer level with 18 behavioral variables. You need to develop a customer segmentation to define marketing strategy from the dataset.
 
 Objective
@@ -90,7 +91,6 @@ plt.figure(figsize = (12, 12))
 sns.heatmap(data_imputed.corr(), annot=True, cmap='coolwarm', 
             xticklabels=data_imputed.columns,
             yticklabels=data_imputed.columns)
-image
 
 Clustering using K-Means
 In this section we will perform K-Means clustering on the data and check the clustering metrics (inertia, silhouette scores).
@@ -114,7 +114,6 @@ First, we make the inertia plot:
       plt.show()
       
   inertia_plot(KMeans, data_imputed)
-image
 
 Using the elbow method, we pick a good number of clusters to be 6.
 
@@ -161,20 +160,10 @@ for x in range(2, 7):
     alg = KMeans(n_clusters = x, )
     label = alg.fit_predict(data_imputed)
     print('Silhouette-Score for', x,  'Clusters: ', silhouette_score(data_imputed, label))
-image
 
 Silhouette plots:
 
 silh_samp_cluster(KMeans, data_imputed, stop=7)
-image
-
-image
-
-image
-
-image
-
-image
 
 So far, we have a high average inertia, low silhouette scores, and very wide fluctuations in the size of the silhouette plots. This is not good. Let's apply feature extraction with PCA to improve clustering.
 
@@ -192,7 +181,6 @@ for y in range(2, 5):
         label = alg.fit_predict(data_p)
         print('Silhouette-Score for', x,  'Clusters: ', silhouette_score(data_p, label) , '       Inertia: ',alg.inertia_)
     print()
-image
 
 As you can see, 2 PCA components with 5-6 clusters would be our best bet.
 
@@ -231,7 +219,6 @@ plt.legend()
 plt.title('KMeans Clustering with 6 Clusters')
 plt.xlabel('PC1')
 plt.ylabel('PC2')
-image
 
 So far, by applying PCA we have made notable improvement to KMeans model. Let's try other clustering models as well!
 
@@ -271,7 +258,6 @@ plt.legend()
 plt.title('Agglomerative Hierarchical Clustering with 6 Clusters')
 plt.xlabel('PC1')
 plt.ylabel('PC2')
-image
 
 Gaussian Mixture Clustering with PCA
 data_p = pd.DataFrame(PCA(n_components = 2).fit_transform(data_imputed))
@@ -309,7 +295,6 @@ plt.legend()
 plt.title('Gaussian Mixture Clustering with 6 Clusters')
 plt.xlabel('PC1')
 plt.ylabel('PC2')
-image
 
 Exploratory Data Analysis
 We are picking 6 clusters for this EDA. Let's make a Seaborn pairplot with selected/best columns to show how the clusters are segmenting the samples:
@@ -332,7 +317,6 @@ best_cols.append('cluster')
 
 # make a Seaborn pairplot
 sns.pairplot(data_final[best_cols], hue='cluster')
-image
 
 We can see some interesting correlations between features and clusters that we have made above. Let's get into detailed analysis.
 
@@ -340,7 +324,6 @@ Cluster 0 (Blue): The Average Joe
 sns.pairplot(data_final[best_cols], hue='cluster', x_vars=['PURCHASES', 'PAYMENTS', 'CREDIT_LIMIT'],
             y_vars=['cluster'],
             height=5, aspect=1)
-image
 
 This group of users, while having the highest number of users by far, is fairly frugal: they have lowest purchases, second lowest payments, and lowest credit limit. The bank would not make much profit from this group, so there should be some sorts of strategy to attract these people more.
 
@@ -348,7 +331,6 @@ Cluster 1 (Orange): The Active Users
 sns.pairplot(data_final[best_cols], hue='cluster', x_vars=['PURCHASES', 'PAYMENTS', 'CREDIT_LIMIT'],
             y_vars=['cluster'],
             height=5, aspect=1)
-image
 
 This group of users is very active in general: they have second highest purchases, third highest payments, and the most varied credit limit values. This type of credit card users is the type you should spend the least time and effort on, as they are already the ideal one.
 
@@ -357,33 +339,28 @@ The Big Spenders. This group is by far the most interesting to analyze, since th
 
     sns.pairplot(data_final[best_cols], hue='cluster', x_vars=['PURCHASES', 'PAYMENTS', 'CREDIT_LIMIT'], y_vars=['cluster'],
                 height=5, aspect=1)
-image
 
 As a nature of the "Big Spenders", there are many outliers in this cluster: people who have/make abnormally high balance, purchases, cash advance, and payment. The graph below will give you an impression of how outlier-heavy this cluster is - almost all the green dots are outliers relatively compared to the rest of the whole dataset.
 
 sns.pairplot(data_final[best_cols], hue='cluster', x_vars=['PURCHASES'], y_vars=['PAYMENTS'],
         height=5, aspect=1)
-image
 
 Cluster 3 (Red): The Money Borrowers
 sns.pairplot(data_final[best_cols], hue='cluster', x_vars=['BALANCE', 'CASH_ADVANCE', 'PAYMENTS'],
         y_vars=['cluster'],
         height=5, aspect=1)
-image
 
 Wildly varied balance, second highest payments, average purchases. The special thing about this cluster is that these people have the highest cash advance by far - there is even one extreme case that has like 25 cash advance points. We call these people "The Money Borrowers".
 
 Cluster 4 (Purple): The High Riskers
 sns.pairplot(data_final[best_cols], hue='cluster', x_vars=['MINIMUM_PAYMENTS'], y_vars=['CREDIT_LIMIT'],
         height=5, aspect=1)
-image
 
 This group has absurdly high minimum payments while having the second lowest credit limit. It looks like the bank has identified them as higher risk.
 
 Cluster 5 (Brown): The Wildcards
 sns.pairplot(data_final[best_cols], hue='cluster', x_vars=['BALANCE'], y_vars=['CREDIT_LIMIT'],
         height=5, aspect=1)
-image
 
 This group is troublesome to analyze and to come up with a good marketing strategy towards, as both their credit limit and balance values are wildly varied. As you can see, the above graph looks like half of it was made of the color brown!
 
